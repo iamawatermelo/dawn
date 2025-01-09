@@ -31,6 +31,8 @@
   
   let randomOffsetX = $state(0);
   let randomOffsetY = $state(0);
+  
+  let enterpriseMode = $page.url.searchParams.has("enterprise");
 
   onMount(() => {
     const interval = setInterval(() => {
@@ -49,7 +51,7 @@
   });
 </script>
 
-<main style="--animation-progress: {progress}; --x: {randomOffsetX}; --y: {randomOffsetY}">
+<main class={enterpriseMode ? "enterprise" : ""} style="--animation-progress: {progress}; --x: {randomOffsetX}; --y: {randomOffsetY}">
   <h1>
     {hours.toString().padStart(2, '0')}:{minutes.toString().padStart(2, '0')}
   </h1>
@@ -57,6 +59,7 @@
 
 <style>
   main {
+    position: relative;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -71,6 +74,19 @@
     
     transition: filter 1s;
     filter: invert(var(--animation-progress)) sepia(0.2);
+    
+    &:global(.enterprise)::after {
+      content: '';
+      z-index: 1;
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      filter: invert(1);
+      background: 100% / 100% 100% url("./ubiquitiman.png");
+      opacity: var(--animation-progress)
+    }
   }
 
   p,
@@ -84,6 +100,7 @@
     text-align: center;
     font-size: 6em;
     transition: transform linear 120s;
+    z-index: 2;
     
     color: rgba(255, 255, 255, clamp(0.1, var(--animation-progress), 1));
     text-shadow: 0.1rem 0.1rem 0.2rem rgba(255, 255, 255, var(--animation-progress));
